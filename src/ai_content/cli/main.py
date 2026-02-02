@@ -59,7 +59,7 @@ def main(
 
 @app.command()
 def music(
-    prompt: str = typer.Option(..., "--prompt", "-p", help="Music style prompt"),
+    prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="Music style prompt"),
     provider: str = typer.Option("lyria", "--provider", help="Provider: lyria, minimax"),
     style: Optional[str] = typer.Option(None, "--style", "-s", help="Preset style name"),
     duration: int = typer.Option(30, "--duration", "-d", help="Duration in seconds"),
@@ -74,6 +74,9 @@ def music(
     ),
 ):
     """Generate music with AI."""
+    if not prompt and not style:
+        console.print("[red]Error: Either --prompt or --style must be provided[/red]")
+        raise typer.Exit(1)
     asyncio.run(
         _generate_music(
             prompt=prompt,
@@ -90,7 +93,7 @@ def music(
 
 
 async def _generate_music(
-    prompt: str,
+    prompt: Optional[str],
     provider: str,
     style: Optional[str],
     duration: int,
@@ -222,15 +225,19 @@ async def _generate_music(
 
 @app.command()
 def video(
-    prompt: str = typer.Option(..., "--prompt", "-p", help="Scene description"),
+    prompt: Optional[str] = typer.Option(None, "--prompt", "-p", help="Scene description"),
     provider: str = typer.Option("veo", "--provider", help="Provider: veo, kling"),
     style: Optional[str] = typer.Option(None, "--style", "-s", help="Preset style name"),
     aspect: str = typer.Option("16:9", "--aspect", "-a", help="Aspect ratio"),
     duration: int = typer.Option(5, "--duration", "-d", help="Duration in seconds"),
     image: Optional[Path] = typer.Option(None, "--image", "-i", help="First frame image"),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file"),
+    fast: bool = typer.Option(False, "--fast", help="Use faster, lower-quality model"),
 ):
     """Generate video with AI."""
+    if not prompt and not style:
+        console.print("[red]Error: Either --prompt or --style must be provided[/red]")
+        raise typer.Exit(1)
     asyncio.run(
         _generate_video(
             prompt=prompt,
@@ -240,18 +247,20 @@ def video(
             duration=duration,
             image=image,
             output=output,
+            use_fast_model=fast,
         )
     )
 
 
 async def _generate_video(
-    prompt: str,
+    prompt: Optional[str],
     provider: str,
     style: Optional[str],
     aspect: str,
     duration: int,
     image: Optional[Path],
     output: Optional[Path],
+    use_fast_model: bool = False,
 ):
     """Async video generation."""
     # Apply preset if specified
@@ -287,6 +296,7 @@ async def _generate_video(
         duration_seconds=duration,
         first_frame_url=first_frame,
         output_path=str(output) if output else None,
+        use_fast_model=use_fast_model,
     )
 
     _print_result(result)

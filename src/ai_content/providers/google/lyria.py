@@ -6,6 +6,8 @@ Uses WebSocket streaming for real-time music generation.
 
 import asyncio
 import logging
+import wave
+import io
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -179,8 +181,25 @@ class GoogleLyriaProvider:
                 error="No audio data received",
             )
 
-        # Combine audio chunks
-        audio_data = b"".join(audio_chunks)
+        raw_audio_data = b"".join(audio_chunks)
+
+        if not raw_audio_data:
+            return GenerationResult(
+                success=False,
+                provider=self.name,
+                content_type="music",
+                error="No audio data received",
+            )
+
+        # Create WAV file in memory with proper header
+        # Lyria RealTime uses 16-bit PCM, 48kHz, Stereo
+        with io.BytesIO() as wav_io:
+            with wave.open(wav_io, "wb") as wav_file:
+                wav_file.setnchannels(2)  # Stereo
+                wav_file.setsampwidth(2)  # 2 bytes for 16-bit
+                wav_file.setframerate(48000)  # 48kHz
+                wav_file.writeframes(raw_audio_data)
+            audio_data = wav_io.getvalue()
 
         # Save if output path provided
         file_path = None
