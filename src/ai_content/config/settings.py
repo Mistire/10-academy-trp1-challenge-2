@@ -59,7 +59,9 @@ class AIMLAPISettings(BaseSettings):
     music_model: str = "minimax/music-2.0"
     lyria_model: str = "google/lyria2"
     kling_model: str = "klingai/v2.1-master-text-to-video"
-    wan_model: str = "alibaba/wan-2.6-t2v"
+    wan_model: str = "alibaba/wan2.1-t2v-plus"
+    video_model: str = "alibaba/wan2.1-t2v-plus"
+    video_fast_model: str = "alibaba/wan2.1-t2v-turbo"
 
     # Timeouts (MiniMax music can take 15-30 minutes)
     request_timeout: int = 60
@@ -91,6 +93,21 @@ class KlingSettings(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_prefix="KLINGAI_",
+        extra="ignore",
+    )
+
+
+class PollinationsSettings(BaseSettings):
+    """Pollinations.ai configuration."""
+
+    api_key: str = Field(default="", alias="POLLINATIONS_API_KEY")
+    base_url: str = "https://gen.pollinations.ai"
+
+    # Models
+    video_model: str = "seedance"
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
         extra="ignore",
     )
 
@@ -132,6 +149,7 @@ class Settings(BaseSettings):
     google: GoogleSettings = Field(default_factory=GoogleSettings)
     aimlapi: AIMLAPISettings = Field(default_factory=AIMLAPISettings)
     kling: KlingSettings = Field(default_factory=KlingSettings)
+    pollinations: PollinationsSettings = Field(default_factory=PollinationsSettings)
 
     model_config = SettingsConfigDict(
         env_file=".env",
