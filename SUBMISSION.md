@@ -4,6 +4,7 @@ This project implements a command-line tool for generating AI-driven media conte
 
 ## Demo Video
 - **YouTube**: [AI Artist Demo](https://youtu.be/rYPOx5sPzD0)
+- **Note**: The generated `.wav` audio files were converted to `.mp4` format for upload to YouTube.
 
 ## Features Implemented
 
