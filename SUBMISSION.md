@@ -21,6 +21,19 @@ The following audio files are available in the `exports/` directory:
 - `lyria_20260202_125953.wav`
 - `lyria_20260202_130633.wav`
 
+### Example Generation Commands
+The following commands were used to generate the audio content:
+```bash
+# Generate with a text prompt
+uv run ai-content music --prompt "Ethiopian jazz with modern synths" --duration 30
+
+# Generate using a style preset
+uv run ai-content music --style ethiopian-jazz --duration 30
+
+# Generate a longer clip
+uv run ai-content music --style ethiopian-jazz --duration 120
+```
+
 ## Challenges Faced
 > [!IMPORTANT]
 > **Video Generation Hurdles**: I encountered significant obstacles while setting up the video pipeline. Initial attempts with **Google Veo** were blocked by project quotas, and **AIMLAPI** required strict card verification. Even the **Hugging Face** fallback failed due to their serverless video API being discontinued (410 error)
